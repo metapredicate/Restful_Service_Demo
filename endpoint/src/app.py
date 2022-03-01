@@ -6,7 +6,7 @@ app = Flask(__name__)
 run_with_ngrok(app)  # Start ngrok when app is run
 
 
-@app.route("/")
+@app.route("/", methods=['GET'])
 def hello() -> str:
     """
     TODO: _summary_
