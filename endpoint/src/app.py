@@ -44,7 +44,6 @@ def my_func():
 
 @app.route('/demoresource', methods=['POST'])
 def add_resource():
-    result = "{}"
     user_name = request.json['user_name']
     app.logger.info(f'user_name := {user_name}')
     email = request.json['email']
@@ -55,16 +54,39 @@ def add_resource():
     db.session.add(new_resource)
     db.session.commit()
 
-    result = demo_resource_schema.jsonify(new_resource)
-    return result
+    return demo_resource_schema.jsonify(new_resource)
+
+@app.route('/demoresource/<id>', methods=['GET'])
+def get_demoresource(id):
+    demoresource = DemoResource.query.get(id)
+    return demo_resource_schema.jsonify(demoresource)
+
 
 @app.route('/demoresource', methods=['GET'])
 def get_all_demoresources():
-    _all = DemoResource.query.all()
-    result = demo_resources_schema.dump(_all)
+    demoresources = DemoResource.query.all()
+    result = demo_resources_schema.dump(demoresources)
     return jsonify(result)
 
+@app.route('/demoresource/<id>', methods=['PUT'])
+def update_resource(id):
+    resource = DemoResource.query.get(id)
+    user_name = request.json['user_name']
+    app.logger.info(f'user_name := {user_name}')
+    email = request.json['email']
+    app.logger.info(f'email := {email}')
 
+    resource.user_name = user_name
+    resource.email = email
+    db.session.commit()
+    return demo_resource_schema.jsonify(resource)
+
+@app.route('/demoresource/<id>', methods=['DELETE'])
+def delete_resource(id):
+    resource = DemoResource.query.get(id)
+    db.session.delete(resource)
+    db.session.commit()
+    return demo_resource_schema.jsonify(resource)
 
 if __name__ == '__main__':
     app.run()
